@@ -6,7 +6,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin && \
     php /usr/local/bin/composer clear-cache
 
-RUN apt-get update && apt-get install -y unzip zlib1g-dev curl libcurl3-dev locales libxml2-dev
+RUN apt-get update && apt-get install -y unzip zlib1g-dev curl libcurl3-dev locales libxml2-dev libonig-dev libzip-dev
 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
