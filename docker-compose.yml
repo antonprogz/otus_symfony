@@ -1,0 +1,52 @@
+version: '3.7'
+services:
+  php-fpm:
+    build:
+      context: ./docker/php-fpm
+    user: ${uid}:${gid}
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    environment:
+      XDEBUG_CONFIG: remote_enable=1 remote_mode=req remote_host=${ip} remote_port=9000 idekey=phpstorm remote_connect_back=0
+      PHP_IDE_CONFIG: "serverName=docker"
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+      - type: bind
+        source: ./docker/nginx/default.conf
+        target: /etc/nginx/conf.d/default.conf
+    links:
+      - php-fpm
+  php-cli:
+    build:
+      context: ./docker/php-cli
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/hostuser/app
+    environment:
+      UID: ${uid}
+      GID: ${gid}
+  mysql:
+    image: library/mysql:8.0.21
+    command: mysqld --character-set-server=utf8 --init-connect='SET NAMES UTF8;' --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 1
+      MYSQL_DATABASE: multinet-tech
+    ports:
+      - '3306:3306'
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    external_links:
+      - mysql:db
+    ports:
+      - "8081:80"
+    environment:
+      UPLOAD_LIMIT: 300M
