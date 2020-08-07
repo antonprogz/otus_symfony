@@ -1,5 +1,7 @@
 # otus_symfony
 
+Docker environment for linux
+
 To start services, run:
 ```
 bash app.sh
